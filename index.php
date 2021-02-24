@@ -82,41 +82,41 @@ HTML;
 	function rand_font()
 	{
 		global $available_fonts;
-    	return array_rand(array_flip($available_fonts));
+		return array_rand(array_flip($available_fonts));
 	}
 
 	function rand_color($fg = null, $min_ratio = 3.0)
 	{
-    	if ($fg == null) return sprintf('%06x', rand(0, 0xFFFFFF));
+		if ($fg == null) return sprintf('%06x', rand(0, 0xFFFFFF));
 
-	    do $bg = sprintf('%06x', rand(0, 0xFFFFFF));
-    	while (calculate_ratio($fg, $bg) < $min_ratio);
+		do $bg = sprintf('%06x', rand(0, 0xFFFFFF));
+		while (calculate_ratio($fg, $bg) < $min_ratio);
 
-    	return $bg;
+		return $bg;
 	}
 
 	function calculate_ratio($foreground, $background)
-    {
-    	// good Ratio 3.0-4.5
-        if (!$foreground || !$background) return;
-        $fgLuminance = luminance($foreground);
-        $bgLuminance = luminance($background);
+	{
+		// good Ratio 3.0-4.5
+		if (!$foreground || !$background) return;
+		$fgLuminance = luminance($foreground);
+		$bgLuminance = luminance($background);
 
-        return round((max($fgLuminance, $bgLuminance) + 0.05) / (min($fgLuminance, $bgLuminance) + 0.05) * 10) / 10;
-    }
+		return round((max($fgLuminance, $bgLuminance) + 0.05) / (min($fgLuminance, $bgLuminance) + 0.05) * 10) / 10;
+	}
 
 	function luminance($color)
-    {
-    	// Get decimal sRGB values
-    	[$rSrgb, $gSrgb, $bSrgb] = array_map(function ($c) { return hexdec(str_pad($c, 2, $c)) / 255; }, str_split($color, 2));
+	{
+		// Get decimal sRGB values
+		[$rSrgb, $gSrgb, $bSrgb] = array_map(function ($c) { return hexdec(str_pad($c, 2, $c)) / 255; }, str_split($color, 2));
 
-        // Calculate luminance
-        $r = ($rSrgb <= 0.03928) ? $rSrgb / 12.92 : pow((($rSrgb + 0.055) / 1.055), 2.4);
-        $g = ($gSrgb <= 0.03928) ? $gSrgb / 12.92 : pow((($gSrgb + 0.055) / 1.055), 2.4);
-        $b = ($bSrgb <= 0.03928) ? $bSrgb / 12.92 : pow((($bSrgb + 0.055) / 1.055), 2.4);
+		// Calculate luminance
+		$r = ($rSrgb <= 0.03928) ? $rSrgb / 12.92 : pow((($rSrgb + 0.055) / 1.055), 2.4);
+		$g = ($gSrgb <= 0.03928) ? $gSrgb / 12.92 : pow((($gSrgb + 0.055) / 1.055), 2.4);
+		$b = ($bSrgb <= 0.03928) ? $bSrgb / 12.92 : pow((($bSrgb + 0.055) / 1.055), 2.4);
 
-        return 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
-    }
+		return 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
+	}
 
 	function text2image($text, $newline_after_letters=40, $font='Arial', $size=24, $rotate=0, $padding=2, $transparent=true, $color="000", $bg_color="fff")
 	{
@@ -137,47 +137,47 @@ HTML;
 		}
 
 		header("Content-type: image/png");
-	    $width = $height = $offset_x = $offset_y = 0;
-	    $font = strtolower($font);
-	    if (!is_file($dir_fonts . $font . '.ttf')) $font = 'arial';
-	    $font = $dir_fonts . $font . '.ttf';
+		$width = $height = $offset_x = $offset_y = 0;
+		$font = strtolower($font);
+		if (!is_file($dir_fonts . $font . '.ttf')) $font = 'arial';
+		$font = $dir_fonts . $font . '.ttf';
 
-	    // get the font height.
-	    $bounds = imagettfbbox($size, $rotate, $font, "W");
-	    if ($rotate < 0) $font_height = abs($bounds[7] - $bounds[1]);
-	    elseif ($rotate > 0) $font_height = abs($bounds[1] - $bounds[7]);
-	    else $font_height = abs($bounds[7] - $bounds[1]);
+		// get the font height.
+		$bounds = imagettfbbox($size, $rotate, $font, "W");
+		if ($rotate < 0) $font_height = abs($bounds[7] - $bounds[1]);
+		elseif ($rotate > 0) $font_height = abs($bounds[1] - $bounds[7]);
+		else $font_height = abs($bounds[7] - $bounds[1]);
 
-	    // determine bounding box.
-	    $bounds = imagettfbbox($size, $rotate, $font, $text);
-	    if ($rotate < 0)
-	    {
-	    	$width = abs($bounds[4] - $bounds[0]); $height = abs($bounds[3] - $bounds[7]);
+		// determine bounding box.
+		$bounds = imagettfbbox($size, $rotate, $font, $text);
+		if ($rotate < 0)
+		{
+			$width = abs($bounds[4] - $bounds[0]); $height = abs($bounds[3] - $bounds[7]);
 			$offset_y = $font_height; $offset_x = 0;
-	    }
-	    elseif ($rotate > 0)
-	    {
-	    	$width = abs($bounds[2] - $bounds[6]); $height = abs($bounds[1] - $bounds[5]);
+		}
+		elseif ($rotate > 0)
+		{
+			$width = abs($bounds[2] - $bounds[6]); $height = abs($bounds[1] - $bounds[5]);
 			$offset_y = abs($bounds[7] - $bounds[5]) + $font_height; $offset_x = abs($bounds[0] - $bounds[6]);
-	    }
-	    else
-	    {
-	    	$width = abs($bounds[4] - $bounds[6]); $height = abs($bounds[7] - $bounds[1]);
+		}
+		else
+		{
+			$width = abs($bounds[4] - $bounds[6]); $height = abs($bounds[7] - $bounds[1]);
 			$offset_y = $font_height; $offset_x = 0;
-	    }
+		}
 
 		$image = $high_quality ? imagecreatetruecolor($width + ($padding * 2) + 1, $height + ($padding * 2) + 1) :
 								 imagecreate($width + ($padding * 2) + 1, $height + ($padding * 2) + 1);
 
 		[$r, $g, $b] = array_map(function ($c) { return hexdec(str_pad($c, 2, $c)); }, str_split($bg_color, strlen($bg_color) > 4 ? 2 : 1));
-	    $background = $high_quality ? imagecolorallocatealpha($image, $r, $g, $b, $transparent ? 127 : 0) :
+		$background = $high_quality ? imagecolorallocatealpha($image, $r, $g, $b, $transparent ? 127 : 0) :
 									  imagecolorallocate($image, $r, $g, $b);
-	    [$r, $g, $b] = array_map(function ($c) { return hexdec(str_pad($c, 2, $c)); }, str_split($color, strlen($color) > 4 ? 2 : 1));
-	    $foreground = imagecolorallocate($image, $r, $g, $b);
+		[$r, $g, $b] = array_map(function ($c) { return hexdec(str_pad($c, 2, $c)); }, str_split($color, strlen($color) > 4 ? 2 : 1));
+		$foreground = imagecolorallocate($image, $r, $g, $b);
 
-	    if ($transparent === true) imagecolortransparent($image, $background);
-	    imageinterlace($image, true);
-	    if ($high_quality) imagefill($image, 0, 0, $background);
+		if ($transparent === true) imagecolortransparent($image, $background);
+		imageinterlace($image, true);
+		if ($high_quality) imagefill($image, 0, 0, $background);
 
 		imagettftext($image, $size, $rotate, $offset_x + $padding, $offset_y + $padding, $foreground, $font, $text);
 		imagealphablending($image, true);
@@ -207,15 +207,15 @@ HTML;
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_HEADER, 1);
 		curl_setopt($ch, CURLOPT_COOKIEJAR, $cookies);
-      	curl_setopt($ch, CURLOPT_COOKIEFILE, $cookies);
-      	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
-      	//curl_setopt($ch, CURLOPT_PROXY, "http://127.0.0.1:8888");
+	  	curl_setopt($ch, CURLOPT_COOKIEFILE, $cookies);
+	  	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
+	  	//curl_setopt($ch, CURLOPT_PROXY, "http://127.0.0.1:8888");
 
-      	if ($r !== 1 && $redis->exists($id))
-      	{
-      		error_log("Exists $id");
-      		return $redis->get($id);
-      	}
+	  	if ($r !== 1 && $redis->exists($id))
+	  	{
+	  		error_log("Exists $id");
+	  		return $redis->get($id);
+	  	}
 
 		$need_login = false;
 		if (is_file($cookies) && filesize($cookies) > 1)
@@ -232,7 +232,7 @@ HTML;
 		{
 			error_log("Login");
 			curl_setopt($ch, CURLOPT_POST, 1);
-	      	curl_setopt($ch, CURLOPT_URL, $url);
+		  	curl_setopt($ch, CURLOPT_URL, $url);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 			$page = curl_exec($ch);
 			if (curl_errno($ch) != CURLE_OK || empty($page)) return "err2";
@@ -276,16 +276,16 @@ HTML;
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_COOKIEJAR, $cookies);
-      	curl_setopt($ch, CURLOPT_COOKIEFILE, $cookies);
-      	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
-      	//curl_setopt($ch, CURLOPT_PROXY, "http://127.0.0.1:8888");
+	  	curl_setopt($ch, CURLOPT_COOKIEFILE, $cookies);
+	  	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
+	  	//curl_setopt($ch, CURLOPT_PROXY, "http://127.0.0.1:8888");
 
-      	curl_setopt($ch, CURLOPT_POST, 1);
-      	if ($r !== 1 && $redis->exists($id))
-      	{
-      		error_log("Exists $id");
-      		return $redis->get($id);
-      	}
+	  	curl_setopt($ch, CURLOPT_POST, 1);
+	  	if ($r !== 1 && $redis->exists($id))
+	  	{
+	  		error_log("Exists $id");
+	  		return $redis->get($id);
+	  	}
 
 		$need_login = false;
 		if (is_file($cookies) && filesize($cookies) > 1)
@@ -302,7 +302,7 @@ HTML;
 		if ($need_login)
 		{
 			error_log("Login");
-	      	curl_setopt($ch, CURLOPT_URL, $url);
+		  	curl_setopt($ch, CURLOPT_URL, $url);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 			curl_exec($ch);
 			if (curl_getinfo($ch, CURLINFO_HTTP_CODE) !== 302) return "err2";
