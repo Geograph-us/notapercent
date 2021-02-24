@@ -1,0 +1,7 @@
+{
+    "require": {
+        "ext-mbstring": "*",
+        "ext-gd": "*",
+        "predis/predis": "^1.1"
+    }
+}
