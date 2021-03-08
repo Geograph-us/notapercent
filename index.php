@@ -24,8 +24,16 @@
 
 	if ($id > -1)
 	{
-		//$redis = new Predis\Client(getenv('MYREDISCLOUDURL'));
-		$redis = new Predis\Client(getenv('REDISCLOUD_URL'));
+		try
+		{
+			$redis = new Predis\Client(getenv('REDISCLOUD_URL'));
+			$redis->connect();
+		}
+		catch (Exception $e)
+		{
+			$redis = new Predis\Client(getenv('MYREDISCLOUDURL'));
+			$redis->connect();
+		}
 		error_log($id);
 		@chmod($dir_tmp, 0777);
 		$percent = $m === 1 ? get_percentage_bookmark($id) : get_percentage($id);
